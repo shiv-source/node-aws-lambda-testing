@@ -1,28 +1,33 @@
 service: node-serverless-testing
+frameworkVersion: "3"
 plugins:
-  - serverless-apigw-binary
   - serverless-offline
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs18.x
   region: ap-south-1
   memorySize: 192
   timeout: 20
-package:
-  exclude:
-    - .git
+  stage: dev
+  deploymentBucket:
+    name: shiv-source-serverless-deployment-bucket
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
 
-  include:
-    - "node_modules"
-    - "app.js"
-    - "lambda.js"
-custom:
-  apigwBinary:
-  types:
-    - "*/*"
+package:
+  patterns:
+    - '!.git'   # exclude .git file
+    - '!.gitignore' # exclude .gitignore file
+    - '!README.md'  # exclude README.md file
+    - '!LICENSE'   # exclude LICENSE file
+    - 'node_modules'
+    - 'app.js'
+    - 'lambda.js'
+
 functions:
- api:
-  handler: lambda.handler
-  events:
-      - http: GET {proxy+}
-      - http: GET /
+  api:
+    handler: lambda.handler
+    events:
+      - http: ANY /
+      - http: "ANY {proxy+}"

@@ -16,5 +16,11 @@ app.get('/demo', async(req, res, err) => {
     return res.status(200).send(`<h1> Demo routes are working </h1>`)
 })
 
+app.use('**', (req, res, next) => {
+
+    return res.status(404).send(`<h1> No routes are found.</h1>`)
+});
+
+
 module.exports = app;
 
